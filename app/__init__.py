@@ -1,8 +1,9 @@
 from modules.counter import CounterModule
 
 def main():
-	# c = CounterModule('./material.mp4')
-	c = CounterModule(1)
+	c = CounterModule('./material.mp4')
+	# c = CounterModule('./marker.jpg')
+	# c = CounterModule(0)
 
 	try:
 		c.run()

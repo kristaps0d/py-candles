@@ -4,16 +4,15 @@ import math, time
 class TrackWidget(object):
 	def __init__(self, y_track_height, y_offset:int=30):
 
+		# Centroid tracking
 		self.tracking_threshold_end = y_offset
 		self.detection_threshold_start = y_track_height + y_offset
 
-		self.current_objects = {}
-		self.delivered_objects = {}
-
-		self.circles = []
-		self.current_id = 0
+		self.current_objects, self.delivered_objects = {}, {}
+		self.circles, self.current_id = [], 0
 
 
+	# Centroid tracking
 	def GetCircles(self, circles:list):
 		if circles is None:
 			return None

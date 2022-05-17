@@ -35,9 +35,9 @@ class MaskWidget(object):
 		r_frame = self.GuassianBlur(mask, (5, 5), cv2.BORDER_ISOLATED)
 		return r_frame
 
-	def MarkerMask(self, frame:list, lower:int=120, upper:int=255) -> list:
+	def MarkerMask(self, frame:list, lower:int=200, upper:int=255) -> list:
 		r_frame = self.Grayscale(frame)
-		r_frame = self.Threshold(r_frame, lower, upper, cv2.THRESH_BINARY_INV)
+		r_frame = self.Threshold(r_frame, lower, upper, cv2.THRESH_BINARY)
 		# r_frame = self.GuassianBlur(r_frame, (5, 5))
 		return r_frame
 
