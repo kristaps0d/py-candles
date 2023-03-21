@@ -74,7 +74,6 @@ class MarkerWidget(object):
 					quadrants[q] = max_point
 
 			corners = list(quadrants.values())
-			print(corners)
 
 			# Find outer bounds
 			if len(corners[0]) > 0 and len(corners[1]) > 0 and len(corners[2]) > 0 and len(corners[3]) > 0:

@@ -1,5 +1,6 @@
 from math import pi, radians
 import cv2, numpy as np
+import skimage
 
 class ViewWidget(object):
 
@@ -9,6 +10,7 @@ class ViewWidget(object):
 			circles = np.uint16(np.around(circles))
 
 			for (x, y, r) in circles[0,:]:
+
 				cv2.rectangle(frame, (x-r, y-r), (x+r, y+r), color, thickness)
 
 	def DrawCircles(self, frame:list, circles:list, color:tuple=(0, 255, 0), thickness:int=1):
@@ -17,8 +19,6 @@ class ViewWidget(object):
 
 			for (x, y, r) in circles[0,:]:
 				cv2.circle(frame, (x, y), r, color, thickness)
-
-
 
 	def DrawCentroids(self, frame:list, circles:list, color:tuple=(0, 255, 0)):
 		if circles is not None:
@@ -31,7 +31,7 @@ class ViewWidget(object):
 		if data is not None:
 			for i in data:
 				(x, y, r) = np.uint16(np.around(data[i]))
-				cv2.putText(frame, f'{i+1}: {x}, {y}', (15, y), 0, font_size, color, thickness)
+				cv2.putText(frame, f'{i}: {x}, {y}', (15, y), 0, font_size, color, thickness)
 
 	# Base functions
 	def DrawRectangle(self, frame:list, rect:tuple, color:tuple=(0, 255, 0), thickness:int=1):
@@ -57,7 +57,6 @@ class ViewWidget(object):
 		if len(contours[0]) > 0:
 			cv2.drawContours(frame, contours, -1, color, thickness)
 		
-				
 	# Base function combinations
 	def DrawTrackingLimits(self, frame:list, y_start:int, y_end:int, color:tuple=(0, 255, 255), thickness:int=1):
 		self.DrawHorizontalLine(frame, y_start, color, thickness)

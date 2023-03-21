@@ -1,14 +1,21 @@
-from modules.counter import CounterModule
+from widgets.counter import CounterModule
 
-def main():
-	c = CounterModule('./material.mp4')
-	# c = CounterModule('./marker.jpg')
-	# c = CounterModule(0)
+from widgets.interface.gui import RunGui
+from widgets.interface.windows.main import Main
 
-	try:
-		c.run()
-	except KeyboardInterrupt:
-		del c
+import threading, sys
 
+def main(src, args):
+
+	if (len(args) > 2) and (args[2] == '--dev'):
+		src='./materials/material5.mp4'
+
+	if (len(args) > 1) and (args[1] == '--nogui'):
+		CounterModule(src, 'dbUri')
+		quit()
+
+	RunGui(Main, 'dbUri', src)
+	
 if __name__ == '__main__':
-	main()
+	src='./materials/candles_full-empty-factured-tr.mp4'
+	main(src, sys.argv)
