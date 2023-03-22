@@ -99,14 +99,11 @@ class Main(QtWidgets.QMainWindow):
             # check auth key
             _plaintext = self._elements['inputs']['authenticationInput'].text()
 
-            if (len(_plaintext) == 0):
-                return self.LockInterface()
-
             # hashing
             _cmp_hash = self.envHandle.getenv('userAuthHashSha256')
             _hash = hashlib.sha256(_plaintext.encode()).hexdigest()
 
-            if (_hash != _cmp_hash):
+            if (_hash != _cmp_hash) and (_cmp_hash != ''):
                 return self.LockInterface()
             
             return self.UnlockInterface()
