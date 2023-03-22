@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1031</width>
-    <height>828</height>
+    <height>827</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -62,6 +62,9 @@
         </item>
         <item>
          <widget class="QLCDNumber" name="defectiveCount">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
           <property name="font">
            <font>
             <pointsize>8</pointsize>
@@ -106,9 +109,13 @@
         </item>
         <item>
          <widget class="QLCDNumber" name="goodCount">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
           <property name="font">
            <font>
             <pointsize>8</pointsize>
+            <kerning>true</kerning>
            </font>
           </property>
           <property name="layoutDirection">
@@ -141,7 +148,7 @@
           <property name="font">
            <font>
             <family>Calibri</family>
-            <pointsize>14</pointsize>
+            <pointsize>12</pointsize>
             <weight>50</weight>
             <italic>false</italic>
             <bold>false</bold>
@@ -157,6 +164,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="resetDefective">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>Reset defective</string>
           </property>
@@ -164,6 +174,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="resetGood">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>Reset good</string>
           </property>
@@ -171,6 +184,9 @@
         </item>
         <item>
          <widget class="QCheckBox" name="enableCounter">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>Enable counter</string>
           </property>
@@ -213,15 +229,128 @@
          <number>0</number>
         </property>
         <item>
+         <spacer name="verticalSpacer_5">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Minimum</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
          <widget class="QLabel" name="label_4">
           <property name="font">
            <font>
             <family>Calibri</family>
-            <pointsize>14</pointsize>
+            <pointsize>12</pointsize>
            </font>
           </property>
           <property name="text">
            <string>Debugging</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="visualStream">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Visual stream</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="maskedStream">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Masked stream</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="trackingStream">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Tracking stream</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Minimum</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="Line" name="line_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_7">
+        <item>
+         <spacer name="verticalSpacer_4">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Minimum</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_9">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>20</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>Calibri</family>
+            <pointsize>12</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Auth key</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignBottom|Qt::AlignHCenter</set>
@@ -229,37 +358,24 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="unfilteredStreams">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="text">
-           <string>Unfiltered streams</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="filteredStreams">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="text">
-           <string>Filtered streams</string>
+         <widget class="QLineEdit" name="authInput">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="trackingStreams">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
+         <widget class="QCheckBox" name="authCheckbox">
           <property name="text">
-           <string>Tracking streams</string>
+           <string>Authenticate</string>
           </property>
          </widget>
         </item>
         <item>
-         <spacer name="verticalSpacer_2">
+         <spacer name="verticalSpacer_3">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -322,7 +438,7 @@
              <enum>Qt::StrongFocus</enum>
             </property>
             <property name="text">
-             <string>v1.0.9</string>
+             <string>v1.1.0e</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>

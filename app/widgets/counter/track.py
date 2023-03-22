@@ -1,7 +1,7 @@
 import cv2, numpy as np
 import math, time
 
-from widgets.counter.events.delivered import DeliveredEvent
+from widgets.counter.events.delivered import LegacyDeliveredEvent
 from widgets.counter.events.log import LogEvent
 
 class StatefulTrackingWidget(object):
@@ -149,7 +149,7 @@ class TrackWidget(object):
 					_obj_quality = 'passed'
 
 					self.delivered_objects[i] = _obj
-					_ret = DeliveredEvent(_obj, _obj_quality, dbCon)
+					_ret = LegacyDeliveredEvent(_obj, _obj_quality, dbCon)
 					continue
 				
 				# check for possible nearest new position
