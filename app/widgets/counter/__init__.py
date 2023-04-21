@@ -81,7 +81,7 @@ class CounterModule(object):
 					# f_visuals[0:self.detection_upper_lim, 0:w] = cv2.addWeighted(sub_frame, 0.8, cv2.merge([r, g*255, b]), 0.1, 0.5)
 					
 					_white_mask = WhitePipeline(hsv_ref, gray_ref, self.mask)
-					white_c = CorrectCicles(_white_mask, padding=5)
+					white_c = CorrectCicles(_white_mask, padding=4)
 					
 					_pink_mask = PinkPipeline(hsv_ref, gray_ref, self.mask)
 					pink_c = CorrectCicles(_pink_mask)
@@ -98,14 +98,14 @@ class CounterModule(object):
 					for key in self.defective.known:
 						(x, y, r, c) = np.int0(self.defective.known[key])
 						_state = self.defectStates.states[key]
-						state = 'bad' if _state > 1.6 else 'good'
+						state = 'bad' if _state > 1.5 else 'good'
 
 						if state == 'bad':
 							self.draw.DrawCircles(f_markers, [[[x, y, r]]], (0, 0, 255), 2)
 						else:
 							self.draw.DrawCircles(f_markers, [[[x, y, r]]], (0, 255, 0), 2)
 
-						self.draw.DrawText(f_markers, f'{key} : {_state}', (x-30, y-50), (0, 255, 0), 1, 1)
+						self.draw.DrawText(f_markers, f'{key} : {state}', (x-30, y-50), (0, 255, 0), 1, 1)
 
 					# display pipeline detections
 					# self.draw.DrawCircles(f_visuals, [concat], (0, 0, 255), 1)
@@ -115,11 +115,16 @@ class CounterModule(object):
 
 
 
-
+					# white correction debug
+					mask = np.zeros_like(gray_ref)
+					self.draw.DrawCircles(mask, white_c, (255, 255, 255), -1)
+					mask = cv2.bitwise_and(rgb_ref, rgb_ref, mask=mask)
 
 					# Display frames
 					self.capt.ShowFrame(f_visuals, "visuals")
-					self.capt.ShowFrame(hsv_ref, "hsv_ref")
+					self.capt.ShowFrame(mask, 'mask')
+					
+					# self.capt.ShowFrame(hsv_ref, "hsv_ref")
 					# self.capt.ShowFrame(f_markers, "Markers")
 
 				if cv2.waitKey(25) & 0xFF == ord('q'):

@@ -10,10 +10,8 @@ class WhitePipeline(object):
 
         gray_ref = cv2.filter2D(src=gray_ref, ddepth=-1, kernel=np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]]))        
 
-        gray_ref = cv2.erode(gray_ref, np.ones((3, 3)), iterations=8)
+        gray_ref = cv2.erode(gray_ref, np.ones((3, 3)), iterations=5)
         gray_ref = mask_handle.GuassianBlur(gray_ref, (3, 3)) 
         gray_ref = mask_handle.Threshold(gray_ref, np.mean(gray_ref)+1*np.std(gray_ref))
-
-        cv2.imshow('123', gray_ref)
 
         return gray_ref

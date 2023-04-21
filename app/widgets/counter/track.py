@@ -1,7 +1,7 @@
 import cv2, numpy as np
 import math, time
 
-from widgets.counter.events.delivered import LegacyDeliveredEvent
+from widgets.counter.events.delivered import LegacyDeliveredEvent, DeliveredEvent
 from widgets.counter.events.log import LogEvent
 
 class StatefulTrackingWidget(object):
