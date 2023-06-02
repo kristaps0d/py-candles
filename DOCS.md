@@ -94,10 +94,10 @@ https://raw.githubusercontent.com/kristaps0d/py-candles/prod/docs/Picture1.png
 
 ### Asinhronais režīms
 
-![./docs/demo.mp4](https://raw.githubusercontent.com/kristaps0d/py-candles/prod/docs/demo.mp4)
+https://raw.githubusercontent.com/kristaps0d/py-candles/prod/docs/demo.mp4
 
 #
 
 ### Sinhronais režīms
 
-![async video](http://tastur.ddns.net/static/videos/material.mp4)
+http://tastur.ddns.net/static/videos/material.mp4
