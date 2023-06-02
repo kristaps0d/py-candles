@@ -2,9 +2,13 @@ from widgets.database.schemas.products import Products
 from widgets.database.cursor import DbCursor
 
 class DeliveredEvent(object):
-    def __new__(self, key):
+    def __new__(self, state):
         # debug
-        print(f'{key} delivered')
+        if state == 'passed':
+            pass
+        
+        if state == 'defective':
+            print('Action!: IO action, logging!')
 
 class LegacyDeliveredEvent(object):
     def __new__(self, obj, obj_quality, dbCon):

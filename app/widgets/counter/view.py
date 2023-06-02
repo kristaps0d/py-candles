@@ -56,8 +56,11 @@ class ViewWidget(object):
 	def DrawContours(self, frame:list, contours:list, color:tuple=(0, 0, 255), thickness:int=1):
 		if len(contours[0]) > 0:
 			cv2.drawContours(frame, contours, -1, color, thickness)
-		
+
 	# Base function combinations
+	def DrawTrackingLimit(self, frame:list, y_start:int, color:tuple=(0, 255, 255), thickness:int=1):
+		self.DrawHorizontalLine(frame, y_start, color, thickness)
+		
 	def DrawTrackingLimits(self, frame:list, y_start:int, y_end:int, color:tuple=(0, 255, 255), thickness:int=1):
 		self.DrawHorizontalLine(frame, y_start, color, thickness)
 		self.DrawHorizontalLine(frame, y_end, color, thickness)

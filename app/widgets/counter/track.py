@@ -5,8 +5,12 @@ from widgets.counter.events.delivered import LegacyDeliveredEvent, DeliveredEven
 from widgets.counter.events.log import LogEvent
 
 class StatefulTrackingWidget(object):
-    def __init__(self):
+    def __init__(self, delivery_limit:int=210):
 
+		# tracking limits
+        self.delivery_limit = delivery_limit
+
+		# tracking variables
         self.report = []
 
         self.known = {}
@@ -29,7 +33,7 @@ class StatefulTrackingWidget(object):
 
             self.new.append([x, y, r, c])
 
-    def update(self, defective_report:list, precentage:float=0):
+    def update(self, dbCon, defective_report:list, defect_deltas:list, precentage:float=0):
         
         self.parseNew(defective_report)
         
@@ -44,7 +48,6 @@ class StatefulTrackingWidget(object):
 
             _dist, _index = None, None
             for _key, (_x, _y, _r, _c) in enumerate(self.new):
-
                 
                 _dy = _y - y
                 _dx = abs(_x - x)
@@ -62,8 +65,15 @@ class StatefulTrackingWidget(object):
 
             if (_index == None):
                 self.known.pop(key)
-				# Count as delivered
-                DeliveredEvent(key)
+
+                defectivity, state = max(defect_deltas[key] - 1, 0), 'passed'
+
+                if (defectivity > 0.5):
+                    LogEvent(f'alert: defective product! [id]: {key}; {defectivity*100:.2f}%', dbCon)
+                    state = 'defective'
+
+                DeliveredEvent(state)
+                LegacyDeliveredEvent('', state, dbCon)
                 continue
 
             if (_dist > r * self.max_dev):    

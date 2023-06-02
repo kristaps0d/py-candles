@@ -78,7 +78,7 @@ class CounterModule(object):
 					sub_frame = f_candles[0:self.detection_upper_lim, 0:w]
 					white_rect = np.ones_like(sub_frame, dtype=np.uint8)
 					(r, g, b) = cv2.split(white_rect)
-					# f_visuals[0:self.detection_upper_lim, 0:w] = cv2.addWeighted(sub_frame, 0.8, cv2.merge([r, g*255, b]), 0.1, 0.5)
+					f_visuals[0:self.detection_upper_lim, 0:w] = cv2.addWeighted(sub_frame, 0.8, cv2.merge([r, g, b*255]), 0.1, 0.5)
 					
 					_white_mask = WhitePipeline(hsv_ref, gray_ref, self.mask)
 					white_c = CorrectCicles(_white_mask, padding=4)
@@ -92,7 +92,7 @@ class CounterModule(object):
 					concat = [*white_c[0], *pink_c[0], *yellow_c[0]]
 
 					defective_c = CheckDefectState(rgb_ref, concat, self.mask)
-					self.defective.update(defective_c)
+					self.defective.update(con, defective_c, self.defectStates.states)
 					self.defectStates.update(self.defective.known)
 
 					for key in self.defective.known:
@@ -110,9 +110,15 @@ class CounterModule(object):
 					# display pipeline detections
 					# self.draw.DrawCircles(f_visuals, [concat], (0, 0, 255), 1)
 					# self.draw.DrawCircles(f_visuals, white_c, (0, 255, 0), 2)
-					# self.draw.DrawCircles(f_visuals, pink_c, (255, 0, 0), 2)
+					# self.draw.DrawCircles(f_visuals, pink_c, (0, 0, 255), 2)
 					# self.draw.DrawCircles(f_visuals, yellow_c, (0, 0, 255), 2)
 
+					for i in pink_c[0]:
+						(x, y, r) = np.int0(i)
+						x = x + 50
+						y = y - 10
+						self.draw.DrawText(f_visuals, '-type', (x-10, y), (255, 255, 255), 1, 1)
+						self.draw.DrawText(f_visuals, ' pink', (x, y+20), (255, 255, 255), 1, 1)
 
 
 					# white correction debug
@@ -124,6 +130,8 @@ class CounterModule(object):
 					self.capt.ShowFrame(f_visuals, "visuals")
 					self.capt.ShowFrame(mask, 'mask')
 					
+					self.capt.ShowFrame(hsv_ref, "rgb")
+
 					# self.capt.ShowFrame(hsv_ref, "hsv_ref")
 					# self.capt.ShowFrame(f_markers, "Markers")
 
@@ -135,6 +143,156 @@ class CounterModule(object):
 		self.capt.StopThread()
 
 class CounterModuleAsync(ExceptionHandler):
+	def __init__(self, queue, video_source, dbUri):
+		super().__init__()
+
+		# Functional objects
+		self.capt = VideoWidget(video_source, 30 if type(video_source) is str else None)
+
+		# Function objects
+		self.detect = DetectWidget()
+		self.mask = MaskWidget()
+		self.draw = ViewWidget()
+		self.mark = MarkerWidget()
+
+		self.defective = StatefulTrackingWidget()
+		self.defectDeltas = DefectDeltas()
+
+		# Class private variables
+		self._dbUri = dbUri
+		self._queue = queue
+
+		# Class public variables
+		self.detection_upper_lim = 200
+
+		self._show = {
+			'visuals': False,
+			'mask': False,
+			'markers': False
+		}
+
+		self.run()
+
+	def ResetDisplays(self):
+		cv2.destroyAllWindows()
+
+	def run(self):
+		self.capt.StartThread()
+
+		with DbConnection(self._dbUri) as con:
+			while True:
+				
+				# Async gui IO control
+				# waits, and tries to get incoming commands regarding
+				# visual displays
+				try:
+					_ret = self._queue.get(timeout=0)
+
+					if _ret == 'visuals':
+						self._show['visuals'] = not self._show['visuals']
+						self.ResetDisplays()
+
+					if _ret == 'mask':
+						self._show['mask'] = not self._show['mask']
+						self.ResetDisplays()
+
+					if _ret == 'markers':
+						self._show['markers'] = not self._show['markers']
+						self.ResetDisplays()
+
+				except:
+					pass
+
+				if self.capt.frame is not None:
+					
+					# Visual display pipes
+					frame = self.capt.frame.copy()
+					visuals, markers = [frame.copy()] * 2
+					rgb, hsv, gray = frame.copy(), cv2.cvtColor(frame, cv2.COLOR_BGR2HSV), cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+					mask = self.mask.GuassianBlur(frame)
+
+					# ArUco bounds detecting
+					rects, centroids, ids = self.detect.ArUcoMarkers(markers)
+					bounds, points, center = self.mark.MarkerOuterBounds(centroids, ids)
+
+					# static glare maskoff for hsv colorspace
+					(h, w, d) = np.shape(hsv)
+					self.draw.DrawRectangle(hsv, (0, 0, w, self.detection_upper_lim), (0, 0, 0), -1)
+
+					_frame = mask[0:self.detection_upper_lim, 0:w]
+					_rect = np.ones_like(_frame, dtype=np.uint8)
+					(r, g, b) = cv2.split(_rect)
+					visuals[0:self.detection_upper_lim, 0:w] = cv2.addWeighted(_frame, 0.8, cv2.merge([r, g, b*255]), 0.1, 0.5)
+
+					# pipelines for differant candle recognition
+					# premade to spit specs
+					#
+					# pipeline: white
+					_white_mask = WhitePipeline(hsv, gray, self.mask)
+					white_c = CorrectCicles(_white_mask, padding=4)
+					
+					# pipeline: pink
+					_pink_mask = PinkPipeline(hsv, gray, self.mask)
+					pink_c = CorrectCicles(_pink_mask)
+					
+					# pipeline: yellow
+					_yellow_mask = YellowPipeline(hsv, gray, self.mask)
+					yellow_c = CorrectCicles(_yellow_mask)
+
+					# All pipeline combination: concat, for global mask
+					concat = [*white_c[0], *pink_c[0], *yellow_c[0]]
+
+					# Defective detection pipeline
+					defective_c = CheckDefectState(rgb, concat, self.mask)
+					self.defective.update(con, defective_c, self.defectDeltas.states)
+					self.defectDeltas.update(self.defective.known)
+
+					# User visuals for visual pipe
+					for key in self.defective.known:
+						(x, y, r, c) = np.int0(self.defective.known[key])
+						_state = self.defectDeltas.states[key]
+						state = 'bad' if _state > 1.5 else 'good'
+
+						if state == 'bad':
+							self.draw.DrawCircles(visuals, [[[x, y, r]]], (0, 0, 255), 2)
+						else:
+							self.draw.DrawCircles(visuals, [[[x, y, r]]], (0, 255, 0), 2)
+
+						self.draw.DrawText(visuals, f'{state}', (x-20, y-50), (0, 255, 0), 1, 1)
+
+					# Type display
+					for i in pink_c[0]:
+						(x, y, r) = np.int0(i)
+						x = x + 50
+						y = y - 10
+						self.draw.DrawText(visuals, '-type', (x-10, y), (255, 255, 255), 1, 1)
+						self.draw.DrawText(visuals, ' pink', (x, y+20), (255, 255, 255), 1, 1)
+
+					for i in yellow_c[0]:
+						(x, y, r) = np.int0(i)
+						x = x + 50
+						y = y - 10
+						self.draw.DrawText(visuals, '-type', (x-10, y), (255, 255, 255), 1, 1)
+						self.draw.DrawText(visuals, ' yellow', (x, y+20), (255, 255, 255), 1, 1)
+
+					# Display frames
+					if self._show['visuals']:
+						self.capt.ShowFrame(visuals, "Application")
+
+					if self._show['mask']:
+						self.capt.ShowFrame(mask, "Candles")
+
+					if self._show['markers']:
+						self.capt.ShowFrame(hsv, "Markers")
+
+				if cv2.waitKey(25) & 0xFF == ord('q'):
+					self.capt.StopThread()
+					break
+
+	def __del__(self):
+		self.capt.StopThread()
+
+class CounterModuleAsyncLegacy(ExceptionHandler):
 	def __init__(self, queue, video_source, dbUri):
 		super().__init__()
 

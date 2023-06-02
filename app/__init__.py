@@ -8,7 +8,7 @@ import threading, sys
 def main(src, args):
 
 	if (len(args) > 2) and (args[2] == '--dev'):
-		src='./materials/material5.mp4'
+		src='./materials/material.mp4'
 
 	if (len(args) > 1) and (args[1] == '--nogui'):
 		CounterModule(src, 'dbUri')
@@ -17,5 +17,6 @@ def main(src, args):
 	RunGui(Main, 'dbUri', src)
 	
 if __name__ == '__main__':
-	src='./materials/candles_full-empty-factured-tr.mp4'
+	src='./materials/candles_full-colored-tr.mp4'
+	src='./materials/material4.mp4'
 	main(src, sys.argv)
