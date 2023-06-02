@@ -78,8 +78,6 @@ python ./app/__init__.py --dev
 
 Aplikācijas palaišana
 
-https://raw.githubusercontent.com/kristaps0d/py-candles/prod/docs/Picture1.png
-
 ![./docs/Picture1](https://raw.githubusercontent.com/kristaps0d/py-candles/prod/docs/Picture1.png)
 
 1. Lietotāju authentifikācija
@@ -89,8 +87,6 @@ https://raw.githubusercontent.com/kristaps0d/py-candles/prod/docs/Picture1.png
 ![./docs/Picture2](https://raw.githubusercontent.com/kristaps0d/py-candles/prod/docs/Picture2.png)
 #
 ## Demo <a name = "demo_started"></a>
-
-#
 
 ### Asinhronais režīms
 
