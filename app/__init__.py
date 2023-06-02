@@ -14,7 +14,7 @@ def main(src, args):
 		CounterModule(src, 'dbUri')
 		quit()
 
-	RunGui(Main, 'dbUri', src)
+	RunGui(Main, "dbUri", src)
 	
 if __name__ == '__main__':
 	src='./materials/candles_full-colored-tr.mp4'
